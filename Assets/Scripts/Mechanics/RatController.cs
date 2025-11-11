@@ -1,15 +1,12 @@
 using UnityEngine;
 
-public class FrogController : Possessable
+public class RatController : Possessable
 {
-    public float moveSpeed = 3f;
-    public float jumpForce = 7f;
-
-    private Animator animator;
-    private SpriteRenderer sr;
+    public float moveSpeed = 4f;
 
     private Rigidbody2D rb;
-    private bool isGrounded;
+    private Animator animator;
+    private SpriteRenderer sr;
 
     void Start()
     {
@@ -22,7 +19,6 @@ public class FrogController : Possessable
     {
         if (!isPossessed) return;
 
-        // Movimento horizontal
         float moveX = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveX * moveSpeed, rb.linearVelocity.y);
 
@@ -33,38 +29,19 @@ public class FrogController : Possessable
         else if (moveX < 0)
             sr.flipX = true;
 
-        // Pulo
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            //animator.SetBool("isJumping", true);
-        }
-
-        // Liberar posse
         if (Input.GetKeyDown(KeyCode.R))
         {
             ghost.ReleasePossession();
         }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        isGrounded = true;
-    }
-
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        isGrounded = false;
-    }
-
     public override void OnPossessed(PlayerController controller)
     {
-        base.OnPossessed(controller); 
+        base.OnPossessed(controller);
     }
 
     public override void OnReleased()
     {
-        base.OnReleased(); 
+        base.OnReleased();
     }
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using Unity.Cinemachine;
 using UnityEngine;
+using static UnityEditor.ShaderData;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private GameObject currentPossession;
     private List<Possessable> nearbyPossessables = new List<Possessable>();
     private Vector3 lastPossessedPosition;
+    public CinemachineCamera virtualCamera;
+    private SpriteRenderer sr;
 
 
     private Vector2 moveInput;
@@ -20,13 +24,23 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>(); 
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
 
         Physics2D.IgnoreLayerCollision(
             LayerMask.NameToLayer("Ghost"),
             LayerMask.NameToLayer("Possessable"),
             true
         );
+
+        Physics2D.IgnoreLayerCollision(
+            LayerMask.NameToLayer("Possessable"),
+            LayerMask.NameToLayer("Possessable"),
+            true
+        );
+
+        if (virtualCamera != null)
+            virtualCamera.Follow = transform;
     }
 
     private void Update()
@@ -62,6 +76,11 @@ public class PlayerController : MonoBehaviour
     {
         float moveX = Input.GetAxisRaw("Horizontal"); 
         moveInput = new Vector2(moveX, 0).normalized;
+
+        if (moveX > 0)
+            sr.flipX = true;
+        else if (moveX < 0)
+            sr.flipX = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -102,6 +121,8 @@ public class PlayerController : MonoBehaviour
         if (closest != null)
         {
             currentPossession = closest.gameObject;
+            if (virtualCamera != null)
+                virtualCamera.Follow = closest.transform;
             closest.OnPossessed(this); 
             gameObject.SetActive(false);
             isPossessing = true;
@@ -122,5 +143,8 @@ public class PlayerController : MonoBehaviour
          
         isPossessing = false;
         currentPossession = null;
+
+        if (virtualCamera != null)
+            virtualCamera.Follow = transform;
     }
 }
