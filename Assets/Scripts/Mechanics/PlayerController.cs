@@ -120,6 +120,15 @@ public class PlayerController : MonoBehaviour
 
         if (closest != null)
         {
+                Debug.Log("Chegou aqui!");
+            DeathCharacter death;
+            if (closest.TryGetComponent<DeathCharacter>(out death) && death.preventPossession)
+            {
+                Debug.Log("Chegou aqui! 3");
+
+                death.TriggerDialogue(this);
+                return;
+            }
             currentPossession = closest.gameObject;
             if (virtualCamera != null)
                 virtualCamera.Follow = closest.transform;
