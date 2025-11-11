@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.Cinemachine;
 using UnityEngine;
-using static UnityEditor.ShaderData;
 
 public class PlayerController : MonoBehaviour
 {
